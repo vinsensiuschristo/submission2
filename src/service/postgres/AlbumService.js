@@ -1,6 +1,7 @@
 const { Pool } = require("pg");
 const { nanoid } = require("nanoid");
 const InvariantError = require("../../exceptions/InvariantError");
+const NotFoundError = require("../../exceptions/NotFoundError");
 const { mapDBToModelAlbum } = require("../../utils");
 
 class AlbumService {
@@ -14,7 +15,7 @@ class AlbumService {
         const updatedAt = createdAt;
 
         const query = {
-            text: "INSERT INTO musicapi VALUES($1, $2, $3, $4, $5) RETURNING id",
+            text: "INSERT INTO albums VALUES($1, $2, $3, $4, $5) RETURNING id",
             values: [id, name, year, createdAt, updatedAt],
         };
 
@@ -29,7 +30,7 @@ class AlbumService {
 
     async getAlbumById(id) {
         const query = {
-            text: "SELECT * FROM musicapi WHERE id = $1",
+            text: "SELECT * FROM albums WHERE id = $1",
             values: [id],
         };
         const result = await this._pool.query(query);
@@ -44,7 +45,7 @@ class AlbumService {
     async editAlbumById(id, { name, year }) {
         const updatedAt = new Date().toISOString();
         const query = {
-            text: "UPDATE musicapi SET name = $1, year = $2, updated_at = $3 WHERE id = $4 RETURNING id",
+            text: "UPDATE albums SET name = $1, year = $2, updated_at = $3 WHERE id = $4 RETURNING id",
             values: [name, year, updatedAt, id],
         };
 
@@ -59,7 +60,7 @@ class AlbumService {
 
     async deleteAlbumById(id) {
         const query = {
-            text: "DELETE FROM musicapi WHERE id = $1 RETURNING id",
+            text: "DELETE FROM albums WHERE id = $1 RETURNING id",
             values: [id],
         };
 
