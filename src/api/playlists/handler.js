@@ -3,7 +3,7 @@ const ClientError = require('../../exceptions/ClientError');
 
 class PlaylistsHandler {
   constructor(playlistsService, validator) {
-    this._playlistsService = playlistsService;
+    this._service = playlistsService;
     this._validator = validator;
 
     this.postPlaylistHandler = this.postPlaylistHandler.bind(this);
@@ -18,7 +18,7 @@ class PlaylistsHandler {
       const { name } = request.payload;
       const { id: credentialId } = request.auth.credentials;
 
-      const playlistId = await this._playlistsService.addPlaylist(name, credentialId);
+      const playlistId = await this._service.addPlaylist(name, credentialId);
 
       const response = h.response({
         status: 'success',
@@ -52,14 +52,16 @@ class PlaylistsHandler {
   async getPlaylistsHandler(request, h) {
     try {
       const { id: credentialId } = request.auth.credentials;
-      const playlists = await this._playlistsService.getPlaylistById(credentialId);
+      const playlists = await this._service.getPlaylistById(credentialId);
 
-      return {
+      const response = h.response({
         status: 'success',
         data: {
           playlists,
         },
-      };
+      });
+      response.code(200);
+      return response;
     } catch (error) {
       if (error instanceof ClientError) {
         const response = h.response({
@@ -85,8 +87,8 @@ class PlaylistsHandler {
       const { id } = request.params;
       const { id: credentialId } = request.auth.credentials;
 
-      await this._playlistsService.verifyPlaylistOwner(id, credentialId);
-      await this._playlistsService.deletePlaylist(id);
+      await this._service.verifyPlaylistOwner(id, credentialId);
+      await this._service.deletePlaylist(id);
 
       const response = h.response({
         status: 'success',
@@ -104,6 +106,7 @@ class PlaylistsHandler {
         return response;
       }
 
+      // Server ERROR!
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kesalahan pada server',

@@ -3,6 +3,7 @@ const { nanoid } = require('nanoid');
 const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
 
 class PlaylistsService {
   constructor() {
@@ -28,7 +29,7 @@ class PlaylistsService {
 
   async getPlaylistById(id) {
     const query = {
-      text: 'SELECT * FROM playlists WHERE id = $1',
+      text: 'SELECT p.id, p.name, u.username FROM playlists p INNER JOIN users u ON p.owner = u.id WHERE p.owner = $1',
       values: [id],
     };
 
@@ -38,7 +39,7 @@ class PlaylistsService {
       throw new NotFoundError('Playlist tidak ditemukan');
     }
 
-    return result.rows[0];
+    return result.rows;
   }
 
   async deletePlaylist(id) {
@@ -54,13 +55,22 @@ class PlaylistsService {
     }
   }
 
-  // async verifyPlaylistOwner(id, owner) {
-  //   const query = {
-  //     text: 'SELECT id, owner FROM playlists WHERE id = $1',
-  //     values: [id],
-  //   };
+  async verifyPlaylistOwner(id, owner) {
+    const query = {
+      text: 'SELECT id, owner FROM playlists WHERE id = $1',
+      values: [id],
+    };
 
-  // }
+    const result = await this._pool.query(query);
+
+    if (!result.rows.length) {
+      throw new InvariantError('Playlist tidak ditemukan');
+    }
+    const playlist = result.rows[0];
+    if (playlist.owner !== owner) {
+      throw new AuthorizationError('Anda tidak berhak mengakses resource ini');
+    }
+  }
 }
 
 module.exports = PlaylistsService;
