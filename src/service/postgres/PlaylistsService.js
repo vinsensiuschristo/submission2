@@ -9,7 +9,7 @@ class PlaylistsService {
     this._pool = new Pool();
   }
 
-  async addPlaylist({ name, owner }) {
+  async addPlaylist(name, owner) {
     const id = `playlists-${nanoid(16)}`;
 
     const query = {
