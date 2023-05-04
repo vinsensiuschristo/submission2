@@ -9,6 +9,8 @@ class PlaylistsHandler {
     this.postPlaylistHandler = this.postPlaylistHandler.bind(this);
     this.getPlaylistsHandler = this.getPlaylistsHandler.bind(this);
     this.deletePlaylistByIdHandler = this.deletePlaylistByIdHandler.bind(this);
+    // this.postPlaylistSongHandler = this.postPlaylistSongHandler.bind(this);
+    // this.deletePlaylistSongHandler = this.deletePlaylistSongHandler.bind(this);
   }
 
   async postPlaylistHandler(request, h) {
@@ -116,6 +118,83 @@ class PlaylistsHandler {
       return response;
     }
   }
+
+  // Playlist Song
+  // async postPlaylistSongHandler(request, h) {
+  //   try {
+  //     this._validator.validatePlaylistSongPayload(request.payload);
+
+  //     const playlistId = request.params;
+  //     const { id: credentialId } = request.auth.credentials;
+  //     const { songId } = request.payload;
+
+  //     this._service.verifyPlaylistOwner(songId, credentialId);
+  //     const playlistSongId = await this._service.addPlaylistSong(playlistId, songId);
+
+  //     const response = h.response({
+  //       status: 'success',
+  //       message: 'Playlist Song berhasil ditambahkan',
+  //       data: {
+  //         playlistSongId,
+  //       },
+  //     });
+  //     response.code(201);
+  //     return response;
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (error instanceof ClientError) {
+  //       const response = h.response({
+  //         status: 'fail',
+  //         message: error.message,
+  //       });
+  //       response.code(error.statusCode);
+  //       return response;
+  //     }
+
+  //     const response = h.response({
+  //       status: 'error',
+  //       message: 'Maaf, terjadi kesalahan pada server',
+  //     });
+  //     response.code(500);
+  //     console.error(error);
+  //     return response;
+  //   }
+  // }
+
+  // async deletePlaylistSongHandler(request, h) {
+  //   try {
+  //     this._validator.validatePlaylistSongPayload(request.payload);
+  //     const { id: credentialId } = request.auth.credentials;
+  //     const { songId } = request.payload;
+  //     const playlistId = request.params;
+
+  //     await this._service.verifyPlaylistOwner(songId, credentialId);
+  //     await this._service.deletePlaylistSongHandler(playlistId, songId);
+
+  //     return {
+  //       status: 'success',
+  //       message: 'Playlist song berhasil dihapus',
+  //     };
+  //   } catch (error) {
+  //     if (error instanceof ClientError) {
+  //       const response = h.response({
+  //         status: 'fail',
+  //         message: error.message,
+  //       });
+  //       response.code(error.statusCode);
+  //       return response;
+  //     }
+
+  //     // Server ERROR!
+  //     const response = h.response({
+  //       status: 'error',
+  //       message: 'Maaf, terjadi kegagalan pada server kami.',
+  //     });
+  //     response.code(500);
+  //     console.error(error);
+  //     return response;
+  //   }
+  // }
 }
 
 module.exports = PlaylistsHandler;

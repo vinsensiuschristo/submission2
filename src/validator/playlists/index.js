@@ -11,6 +11,7 @@ const PlaylistsValidator = {
       throw new InvariantError(validationResult.error.message);
     }
   },
+
 };
 
 module.exports = PlaylistsValidator;
